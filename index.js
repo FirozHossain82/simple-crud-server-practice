@@ -1,5 +1,5 @@
 const express = require("express");
-const { MongoClient, ServerApiVersion } = require('mongodb');
+const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
 const cors = require("cors");
 const app = express();
 const port = process.env.PORT || 5000;
@@ -32,6 +32,15 @@ async function run() {
     const database = client.db('crudDB')
     const userCollection = database.collection('users');
 
+    // get er maddhome data read kora hoy i mean khuje ber kora hoy.
+    app.get('/users', async(req, res) =>{
+        const cursor = userCollection.find();
+        const result = await cursor.toArray();
+        res.send(result);
+    })
+
+
+
 // create post
     app.post('/users', async(req, res) =>{
          const user = req.body;
@@ -40,6 +49,15 @@ async function run() {
          res.send(result);
     })
 
+
+    // delete post
+    app.delete('/users/:id', async(req, res) =>{
+        const id = req.params.id;
+        console.log('Please delete from database', id);
+        const query = {_id: new ObjectId(id)}
+        const result = await userCollection.deleteOne(query);
+        res.send(result);
+    })
 
 
     // Send a ping to confirm a successful connection
